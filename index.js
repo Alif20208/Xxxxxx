@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Replace with your Telegram bot token stored securely (e.g., in an environment variable)
-const token = '7533647450:AAG1qvP1dZOIhWN7k45l_ciG6onj3jtql6s';
+const token = '7533647450:AAG1qv1dZOIhWN7k45l_ciG6onj3jtql6s';
 const bot = new TelegramBot(token, { polling: true });
 
 // Function to validate the URL
@@ -116,22 +116,26 @@ bot.onText(/\/admin/, async (msg) => {
 // Listen for any text messages and check if they contain a URL
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
-    const url = msg.text.trim();
 
-    // If the message is not a URL and not one of the commands, ignore
-    if (msg.text.startsWith('/start') || msg.text.startsWith('/info') || msg.text.startsWith('/admin')) {
-        return;
-    }
+    // Check if msg.text is defined
+    if (msg.text) {
+        const url = msg.text.trim();
 
-    // Validate URL
-    if (isValidURL(url)) {
-        const emojiMessage = await bot.sendMessage(chatId, '✅');
-        processVideo(chatId, url, emojiMessage.message_id);
-    } else {
-        const emojiMessage = await bot.sendMessage(chatId, '❌ Invalid URL. Please provide a correct link.');
-        // Optionally, you can delete the ❌ message after a few seconds if you want
-        setTimeout(() => {
-            bot.deleteMessage(chatId, emojiMessage.message_id);
-        }, 5000);  // Delete after 5 seconds
+        // If the message is not a URL and not one of the commands, ignore
+        if (msg.text.startsWith('/start') || msg.text.startsWith('/info') || msg.text.startsWith('/admin')) {
+            return;
+        }
+
+        // Validate URL
+        if (isValidURL(url)) {
+            const emojiMessage = await bot.sendMessage(chatId, '✅');
+            processVideo(chatId, url, emojiMessage.message_id);
+        } else {
+            const emojiMessage = await bot.sendMessage(chatId, '❌ Invalid URL. Please provide a correct link.');
+            // Optionally, you can delete the ❌ message after a few seconds if you want
+            setTimeout(() => {
+                bot.deleteMessage(chatId, emojiMessage.message_id);
+            }, 5000);  // Delete after 5 seconds
+        }
     }
 });
